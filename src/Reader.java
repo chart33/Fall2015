@@ -24,9 +24,8 @@ public void readFile(String filePath){
 		 //can I add code here such that each line read is added to the vector?
 		 System.out.println("********************"+line);
 		//here you need to figure out a way to go from the buffered stream to string or parse to array
-		 /*StringWriter writer = new StringWriter();
-		 IOUtils.copy(inputStream, writer, encoding);
-		 String theString = writer.toString();*/
+		 
+		 
 		 
 	 }
 	 }
