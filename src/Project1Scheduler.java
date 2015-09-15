@@ -29,24 +29,20 @@ public class Project1Scheduler implements scheduler {
 			GRBModel model = new GRBModel(env);
 		
 			// Create the variables
-			GRBVar gvarJoeCS6300 = model.addVar(0, 1, 0.0, GRB.BINARY, "Joe_CS6300");
-			GRBVar gvarJoeCS6310 = model.addVar(0, 1, 0.0, GRB.BINARY, "Joe_CS6310");
-			GRBVar gvarJaneCS6300 = model.addVar(0, 1, 0.0, GRB.BINARY, "Jane_CS6300");
-			GRBVar gvarJaneCS6310 = model.addVar(0, 1, 0.0, GRB.BINARY, "Jane_CS6310");
-			GRBVar gvarMaryCS6300 = model.addVar(0, 1, 0.0, GRB.BINARY, "Mary_CS6300");
-			GRBVar gvarMaryCS6310 = model.addVar(0, 1, 0.0, GRB.BINARY, "Mary_CS6310");
+			MakeVariables mVar = new MakeVariables();
+			mVar.allVariables();
 
 			// Integrate new variables
             model.update();
 			
             // Set the objective as the sum of all student-courses
             GRBLinExpr expr = new GRBLinExpr();
-            expr.addTerm( 1, gvarJoeCS6300 );
+           /* expr.addTerm( 1, gvarJoeCS6300 );
             expr.addTerm( 1, gvarJoeCS6310 );
             expr.addTerm( 1, gvarJaneCS6300 );
             expr.addTerm( 1, gvarJaneCS6310 );
             expr.addTerm( 1, gvarMaryCS6300 );
-            expr.addTerm( 1, gvarMaryCS6310 );
+            expr.addTerm( 1, gvarMaryCS6310 );*/
             
             //will use this statement to minimize for project 1
             model.setObjective(expr, GRB.MAXIMIZE);
@@ -54,15 +50,15 @@ public class Project1Scheduler implements scheduler {
 			// Add Constraints for each class so that the sum of students taking
             // the course is less than or equal to MAX_CLASS_SIZE
             expr = new GRBLinExpr();
-            expr.addTerm( 1, gvarJoeCS6300 );
+           /* expr.addTerm( 1, gvarJoeCS6300 );
             expr.addTerm( 1, gvarJaneCS6300 );
-            expr.addTerm( 1, gvarMaryCS6300 );
+            expr.addTerm( 1, gvarMaryCS6300 );*/
             model.addConstr(expr, GRB.LESS_EQUAL, MAX_CLASS_SIZE, "CS6300" );
 
             expr = new GRBLinExpr();
-            expr.addTerm( 1, gvarJoeCS6310 );
+           /* expr.addTerm( 1, gvarJoeCS6310 );
             expr.addTerm( 1, gvarJaneCS6310 );
-            expr.addTerm( 1, gvarMaryCS6310 );
+            expr.addTerm( 1, gvarMaryCS6310 );*/
             model.addConstr(expr, GRB.LESS_EQUAL, MAX_CLASS_SIZE, "CS6310" );
 
             // Optimize the model
@@ -71,7 +67,7 @@ public class Project1Scheduler implements scheduler {
             // Display our results
             double objectiveValue = model.get(GRB.DoubleAttr.ObjVal);            
             System.out.printf( "Ojective value = %f\n", objectiveValue );
-            
+           /* 
             if( gvarJoeCS6300.get(GRB.DoubleAttr.X) == 1 )
                 System.out.printf( "Joe is taking CS6300\n" );            	
             if( gvarJoeCS6310.get(GRB.DoubleAttr.X) == 1 )
@@ -84,7 +80,7 @@ public class Project1Scheduler implements scheduler {
                 System.out.printf( "Mary is taking CS6300\n" );            	
             if( gvarMaryCS6310.get(GRB.DoubleAttr.X) == 1 )
                 System.out.printf( "Mary is taking CS6310\n" );            	
-                        
+                 */       
             
 		} catch (GRBException e) {
 			e.printStackTrace();

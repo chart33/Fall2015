@@ -4,9 +4,9 @@ import gurobi.GRBException;
 import gurobi.GRBModel;
 import gurobi.GRBVar;
 
-/* The purpose of this class is to generate all possible permuations of 
- * 600 students* 18 courses * 12 semesters.  this is a shitload of
- * variables.*/
+/* The purpose of this class is to generate all possible permutations of 
+ * 600 students* 18 courses * 12 semesters.*/
+
 public class MakeVariables {
 	int c = 0;
 	
@@ -17,11 +17,11 @@ public class MakeVariables {
 
 		      // Create 3-D array of model variables
 
-		      GRBVar[][][] vars = new GRBVar[600][18][12];
+		      GRBVar[][][] vars = new GRBVar[601][19][13];
 
-		      for (int i = 0; i <= 600; i++) {
-		        for (int j = 0; j <= 18; j++) {
-		          for (int k = 0; k <= 12; k++) {
+		      for (int i = 1; i <= 600; i++) {
+		        for (int j = 1; j <= 18; j++) {
+		          for (int k = 1; k <= 12; k++) {
 		            String st = "G_" + String.valueOf(i) + "_" + String.valueOf(j)
 		                             + "_" + String.valueOf(k);
 		            vars[i][j][k] = model.addVar(0.0, 1.0, 0.0, GRB.BINARY, st);
@@ -34,7 +34,7 @@ public class MakeVariables {
 				e.printStackTrace();
 			}finally {}
 		      
-		      System.out.println("The total number of variables generaged is: "+ c);
+		      System.out.println("The total number of variables generated is: "+ c);
 		      return c;
 	}
 }

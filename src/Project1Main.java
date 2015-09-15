@@ -7,9 +7,7 @@ public class Project1Main {
 		System.out.println("Now running main method to access scheduler");
 		Reader reader = new Reader();
 		reader.readFile("/home/ubuntu/Documents/student_schedule.txt");
-		MakeVariables mVar = new MakeVariables();
-		mVar.allVariables();
-		
+				
 	}		
 }
 //add comment
