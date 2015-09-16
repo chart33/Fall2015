@@ -1,13 +1,13 @@
-import gurobi.GRB;
+/*import gurobi.GRB;
 import gurobi.GRBEnv;
 import gurobi.GRBException;
 import gurobi.GRBModel;
-import gurobi.GRBVar;
+import gurobi.GRBVar;*/
 
 /* The purpose of this class is to generate all possible permutations of 
  * 600 students* 18 courses * 12 semesters.*/
 
-public class MakeVariables {
+/*public class MakeVariables {
 	int c = 0;
 	
 	public int allVariables(){
@@ -37,8 +37,9 @@ public class MakeVariables {
 		      System.out.println("The total number of variables generated is: "+ c);
 		      return c;
 	}
-}
-//add comment
+}*/
+
+//********* commented this out, might need later but not sure.
 		    		 
 		
 

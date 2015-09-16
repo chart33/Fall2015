@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.Vector;
 
 import gurobi.GRB;
@@ -9,107 +10,102 @@ import gurobi.GRBVar;
 
 public class Project1Scheduler implements scheduler {
 
-    private static final int MAX_CLASS_SIZE = 2;	// Note: Play with this and see 
-    												// what happens to the results
+
 //in the below argument, instead of dataFolder
 	public void calculateSchedule(String dataFolder){
-		// TODO Read the test data from the provided folder.  to do this, call a class Reader
+		int student = 600;
+	    int course = 18;
+	    int semester = 12;
 
-		// The following code is an example of how to use the Gurobi solver.
-		// Replace the variables, objective, and constraints with those
-		// needed to calculate the schedule for the provided data.
+
+	    try {
+	      GRBEnv env = new GRBEnv();
+	      GRBModel model = new GRBModel(env);
+
+	      // Create 3-D array of model variables
+
+	      GRBVar[][][] vars = new GRBVar[student][course][semester];
+
+	      for (int i = 0; i < student; i++) {
+	        for (int j = 0; j < course; j++) {
+	          for (int v = 0; v < semester; v++) {
+	            String st = "G_" + String.valueOf(i) + "_" + String.valueOf(j)
+	                             + "_" + String.valueOf(v);
+	            vars[i][j][v] = model.addVar(0.0, 1.0, 0.0, GRB.BINARY, st);
+	          }
+	        }
+	      }
+
+	      // Integrate variables into model
+
+	      model.update();
+
+	      // Add constraints
+
+	      GRBLinExpr expr;
+
+	      // CONSTRAINT 1: Students take max two classes per semester
+
+	      for (int i = 0; i < student; i++) {
+	    	  expr = new GRBLinExpr();
+	        for (int j = 0; j < course; j++) {
+	        	for(int k = 0; k < semester; k++){
+	          expr.addTerm(1, vars[i][j][k]);
+	        	}
+	        }
+	        String twoClassMax = "Student"+ String.valueOf(student)+".Course"+String.valueOf(course)+".semester"+String.valueOf(semester);
+	        model.addConstr(expr, GRB.EQUAL, 2.0, twoClassMax);
+	    }
+	      
+	      //CONSTRAINt 2: class capacity x
+	      
+	      
+	      // Update model
+
+	      model.update();
+
+
+
+	      // Optimize model
+
+	      model.optimize();
+
+	      // Write model to file
+	      model.write("sudoku.lp");
+
+	      double[][][] x = model.get(GRB.DoubleAttr.X, vars);
+
+	    
+
+	      // Dispose of model and environment
+	      model.dispose();
+	      env.dispose();
+
+	    } catch (GRBException e) {
+	      System.out.println("Error code: " + e.getErrorCode() + ". " +
+	          e.getMessage());
+	    }
+	  }
 		
-		// This example has three students and two classes.  Each class is
-		// limited to two students. The objective is to maximize the total 
-		// number of student-classes taken. It do not deal with semesters
-		
-        GRBEnv env;
-		try {
-			env = new GRBEnv("mip1.log");
-			GRBModel model = new GRBModel(env);
-		
-			// Create the variables
-			MakeVariables mVar = new MakeVariables();
-			mVar.allVariables();
-
-			// Integrate new variables
-            model.update();
-			
-            // Set the objective as the sum of all student-courses
-            GRBLinExpr expr = new GRBLinExpr();
-           /* expr.addTerm( 1, gvarJoeCS6300 );
-            expr.addTerm( 1, gvarJoeCS6310 );
-            expr.addTerm( 1, gvarJaneCS6300 );
-            expr.addTerm( 1, gvarJaneCS6310 );
-            expr.addTerm( 1, gvarMaryCS6300 );
-            expr.addTerm( 1, gvarMaryCS6310 );*/
-            
-            //will use this statement to minimize for project 1
-            model.setObjective(expr, GRB.MAXIMIZE);
-
-			// Add Constraints for each class so that the sum of students taking
-            // the course is less than or equal to MAX_CLASS_SIZE
-            expr = new GRBLinExpr();
-           /* expr.addTerm( 1, gvarJoeCS6300 );
-            expr.addTerm( 1, gvarJaneCS6300 );
-            expr.addTerm( 1, gvarMaryCS6300 );*/
-            model.addConstr(expr, GRB.LESS_EQUAL, MAX_CLASS_SIZE, "CS6300" );
-
-            expr = new GRBLinExpr();
-           /* expr.addTerm( 1, gvarJoeCS6310 );
-            expr.addTerm( 1, gvarJaneCS6310 );
-            expr.addTerm( 1, gvarMaryCS6310 );*/
-            model.addConstr(expr, GRB.LESS_EQUAL, MAX_CLASS_SIZE, "CS6310" );
-
-            // Optimize the model
-            model.optimize();
-
-            // Display our results
-            double objectiveValue = model.get(GRB.DoubleAttr.ObjVal);            
-            System.out.printf( "Ojective value = %f\n", objectiveValue );
-           /* 
-            if( gvarJoeCS6300.get(GRB.DoubleAttr.X) == 1 )
-                System.out.printf( "Joe is taking CS6300\n" );            	
-            if( gvarJoeCS6310.get(GRB.DoubleAttr.X) == 1 )
-                System.out.printf( "Joe is taking CS6310\n" );            	
-            if( gvarJaneCS6300.get(GRB.DoubleAttr.X) == 1 )
-                System.out.printf( "Jane is taking CS6300\n" );            	
-            if( gvarJaneCS6310.get(GRB.DoubleAttr.X) == 1 )
-                System.out.printf( "Jane is taking CS6310\n" );            	
-            if( gvarMaryCS6300.get(GRB.DoubleAttr.X) == 1 )
-                System.out.printf( "Mary is taking CS6300\n" );            	
-            if( gvarMaryCS6310.get(GRB.DoubleAttr.X) == 1 )
-                System.out.printf( "Mary is taking CS6310\n" );            	
-                 */       
-            
-		} catch (GRBException e) {
-			e.printStackTrace();
-		}
-
-		
-	}
-
-	public double getObjectiveValue() {
-		// TODO: You will need to implement this
-		/*this method will return the actual value we are looking for.  In the case of project 1 this
-		 * is the integer 127 (x) which represents minimum class size to accomodate schedules 
-		 * This method will implement gorobi.*/
-		
-		return 0;
-	}
-
-	public Vector<String> getCoursesForStudentSemester(String student, String semester) {
-		// TODO: You will need to implement this
-		/*this method returns a vector of strings that takes a student(1...600)  and a semester (1...12) 
-		 * as args and returns the courses that the student will optimally take that semester.  Or.. is it requested or optimal? */
-		return null;
-	}
-
-	public Vector<String> getStudentsForCourseSemester(String course, String semester) {
-		// TODO: You will need to implement this
-		/* this method will return a vector of strings that represents which students will occur
-		 * in a given course for a given semester*/
-		return null;
-	}
-
+@Override
+public double getObjectiveValue() {
+	// TODO Auto-generated method stub
+	return 0;
 }
+
+@Override
+public Vector<String> getCoursesForStudentSemester(String student,
+		String semester) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public Vector<String> getStudentsForCourseSemester(String course,
+		String semester) {
+	// TODO Auto-generated method stub
+	return null;
+	}
+}
+
+
