@@ -4,6 +4,8 @@ import gurobi.GRBException;
 import gurobi.GRBModel;
 import gurobi.GRBVar;*/
 
+
+
 /* The purpose of this class is to generate all possible permutations of 
  * 600 students* 18 courses * 12 semesters.*/
 

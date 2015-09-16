@@ -57,7 +57,7 @@ public class Project1Scheduler implements scheduler {
 	        model.addConstr(expr, GRB.EQUAL, 2.0, twoClassMax);
 	    }
 	      
-	      //CONSTRAINt 2: class capacity x
+	      //constraint 2: class capacity x
 	      
 	      
 	      // Update model
