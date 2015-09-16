@@ -60,6 +60,7 @@ public class Project1Scheduler implements scheduler {
 	    }
 	      
 	      //constraint 2: class capacity <= x
+	      //FIGURES OUT WTF X SHOULD BE DOING
 	      for (int i = 0; i < student; i++) {
 	    	  expr = new GRBLinExpr();
 	        for (int j = 0; j < course; j++) {
