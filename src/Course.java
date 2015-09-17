@@ -11,6 +11,7 @@ public class Course {
 	}
 	
 	public static boolean isOffered(int semester, int courseNumber){
+		//this method will tell you if a class is offered based on current semester number and course number
 		int s = (semester+3)%3;
 		boolean offered = false;
 		

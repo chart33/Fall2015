@@ -8,7 +8,7 @@ import gurobi.GRBLinExpr;
 import gurobi.GRBModel;
 import gurobi.GRBVar;
 
-public class Project1Scheduler implements scheduler {
+public class Optimizer implements scheduler {
 
 
 //in the below argument, instead of dataFolder
