@@ -16,6 +16,7 @@ public class Project1Scheduler implements scheduler {
 		int student = 600;
 	    int course = 18;
 	    int semester = 12;
+	    int X=400;//or should initialize to 0?
 	    
 
 	    try {
@@ -49,28 +50,34 @@ public class Project1Scheduler implements scheduler {
 	      // CONSTRAINT 1: Students take max two classes per semester
 
 	      for (int i = 0; i < student; i++) {
-	    	  expr = new GRBLinExpr();
-	        for (int j = 0; j < course; j++) {
-	        	for(int k = 0; k < semester; k++){
-	          expr.addTerm(1, vars[i][j][k]);
+	        for (int k = 0; k < semester; k++) {
+	        	GRBLinExpr maxCourseConstraint = new GRBLinExpr();
+	        	for(int j = 0; j < course; j++){
+	        		maxCourseConstraint.addTerm(1, vars[i][j][k]);
+	        		//System.out.println("add term" + vars[i][j][k]);
 	        	}
-	        }
+	        
 	        String twoClassMax = "Student"+ String.valueOf(student)+".Course"+String.valueOf(course)+".semester"+String.valueOf(semester);
-	        model.addConstr(expr, GRB.EQUAL, 2.0, twoClassMax);
-	    }
+	       //System.out.println(twoClassMax);
+	        model.addConstr(maxCourseConstraint, GRB.LESS_EQUAL, 2.0, twoClassMax);
+	        }
+	      }   
+	      
 	      
 	      //constraint 2: class capacity <= x
 	      //FIGURES OUT WTF X SHOULD BE DOING
-	      for (int i = 0; i < student; i++) {
-	    	  expr = new GRBLinExpr();
-	        for (int j = 0; j < course; j++) {
-	        	for(int k = 0; k < semester; k++){
-	          expr.addTerm(1, vars[i][j][k]);
-	          //expr.addTerm(1, x[0]);
-	        	}
+	      for (int j = 0; j < course; j++) {
+	        for (int k = 0; k < semester; k++) {
+	        	GRBLinExpr capacityConstraint = new GRBLinExpr();
+	        	for(int i = 0; i < student; i++){
+	          capacityConstraint.addTerm(1, vars[i][j][k]);
+	        
+	        	
 	        }
-	        String maxCapacity = "MaxCap: Student"+ String.valueOf(student)+".Course"+String.valueOf(course)+".semester"+String.valueOf(semester);
-	        model.addConstr(expr, GRB.LESS_EQUAL,10000, maxCapacity);
+	        String maxCapacity = "MaxCap"+ String.valueOf(student)+".Course"+String.valueOf(course)+".semester"+String.valueOf(semester);
+	       System.out.println(maxCapacity);
+	        model.addConstr(capacityConstraint, GRB.LESS_EQUAL,X, maxCapacity);
+	      }
 	      }
 	      
 	      //CONSTRAINT 3: classes needed (parse student input!)
