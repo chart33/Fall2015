@@ -32,6 +32,12 @@ public class Course {
 					if(s == 0){
 						offered = true;}
 							else {offered = false;}
+		else if(courseNumber == 5
+				||courseNumber==10
+				||courseNumber==14
+				||courseNumber==16
+				||courseNumber==18){
+			
 			
 			}
 		}
