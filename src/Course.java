@@ -14,7 +14,7 @@ public class Course {
 		int s = (semester+3)%3;
 		boolean offered = false;
 		
-		if(courseNumber==2
+		if(courseNumber==2 //this block is for courses offered every semester
 				||courseNumber==3
 				||courseNumber==4
 				||courseNumber==6
@@ -32,19 +32,14 @@ public class Course {
 					if(s == 0){
 						offered = true;}
 							else {offered = false;}
-		else if(courseNumber == 5
+		}else if(courseNumber == 5 //this block is for courses offered only in the spring
 				||courseNumber==10
 				||courseNumber==14
 				||courseNumber==16
 				||courseNumber==18){
-			
-			
-			}
-		}
-		//1,7,11,15,17
-		
-		
-		
+					if(s == 1){
+						offered = true;}else{offered=false;}
+					}
 		
 		return offered;
 	}
