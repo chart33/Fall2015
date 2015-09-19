@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Vector;
 
 import com.sun.media.sound.ModelAbstractChannelMixer;
@@ -119,6 +120,9 @@ String filepath;
 	    		  GRBLinExpr mustTake = new GRBLinExpr();
 	    		  //get the student object corresponding to student number
 	    		  Students optStudents = new Students(filepath);
+	    		  HashMap<Student, String[]> theseStudents = new HashMap();
+	    		  
+	    		  
 	    		  int studentNumber = i+1;
 	    		  
 	    		  // check if the course appears in array of courses
