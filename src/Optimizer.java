@@ -1,5 +1,8 @@
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Vector;
 
 import com.sun.media.sound.ModelAbstractChannelMixer;
@@ -12,10 +15,13 @@ import gurobi.GRBModel;
 import gurobi.GRBVar;
 
 public class Optimizer implements scheduler {
-String filepath;
+Optimizer(String filepath){
+	//optimizer constructor
+}
+
 
 //in the below argument, instead of dataFolder
-	public void calculateSchedule(String dataFolder){
+	public void calculateSchedule(String filepath){
 		int student = 600;
 	    int course = 18;
 	    int semester = 12;
@@ -115,27 +121,29 @@ String filepath;
 	      //CONSTRAINT 3: make student take class (parse student input!)
 	      //iterating through semesters.  =1 if student wants course, =0 if student doesn't want course
 	      for(int i=0; i<= student; i++){
-	    	  String mustTakeCourse = null;
+	    	  String[] mustTakeCourse = null;
+	    	  List courseList = null;
 	    	  for(int j=0; j<=course; j++){
+	    		 int  courseNumber = j+1;
 	    		  GRBLinExpr mustTake = new GRBLinExpr();
 	    		  //get the student object corresponding to student number
-	    		  Students optStudents = new Students(filepath);
-	    		  HashMap<Student, String[]> theseStudents = new HashMap();
-	    		  
-	    		  
-	    		  int studentNumber = i+1;
-	    		  
-	    		  // check if the course appears in array of courses
-	    		  //if it does, add k term to expression to represent each semester
-	    		  for(int k=0; k<=semester; k++){
-	    		  mustTake.addTerm(1, vars[i][j][k]);
-	    		  //if it doesn't... do nothing
-	    		  
-	    		  //here build string for constraints
-	    		  mustTakeCourse = String.valueOf(i)+"must take"+String.valueOf(j)+" in semester "+String.valueOf(k);
+	    		  Student iStudent = new Student(); //make a student object corresponding to i value
+	    		  iStudent.setNumber(i+1); //set the student Number attribute
+	    		  Students optStudents = new Students(filepath); //now grab the hashset of all setudents
+	    		  HashSet<Student> theseStudents = new HashSet();
+	    		  //iterate through hash set checking for Student that matches iStudent
+	    		  for (Student thisStudent : theseStudents){ 
+	    				if(thisStudent.getNumber()== i+1){
+	    					//now, get the set of courses for this student
+	    					mustTakeCourse = iStudent.getSplit_Course();
+	    				}else{}
+	    				courseList = Arrays.asList(mustTakeCourse);
+	    			}
+	    		  GRBLinExpr mustTakeConstraint = new GRBLinExpr();
+	    		  if(courseList.contains(String.valueOf(courseNumber))){
+	    			  int k = 1;// can I get away with or do I need to loop?
+	    			 mustTake.addTerm(1, vars[i][j][k]);
 	    		  }
-	    		  //here goes constraint statement
-	    		  model.addConstr(mustTake, GRB.EQUAL, 1, mustTakeCourse);
 	    	  }
 	      }
 	      

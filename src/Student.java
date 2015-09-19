@@ -15,6 +15,14 @@ public class Student {
 	public void setNumber(int studentNumber) {
 		this.studentNumber = studentNumber;
 	}
+	
+	public String[] getSplit_Course(){
+		return split_Course;
+	}
+	
+	public void setSplit_Course(String[] splitCourses){
+		this.split_Course = splitCourses;
+	}
 }
 	
 

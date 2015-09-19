@@ -2,21 +2,17 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 
 /*This class has a hash set of all students where each student object knows that classes
  * that it needs to take for the model*/
 public class Students {
 
-HashMap<Student, String[]> allStudents = new HashMap<Student, String[]>();
-//key: student , value: courses
+HashSet<Student> allStudents = new HashSet<Student>();
+//key: student , value: String[c1, c2, c3...]
 	
-	//constructor, but used to prepare object hash map
+	//constructor, used to prepare object hash map
 	 Students(String filePath){
-
-		/*TODO implement this method to read values from file into memory via a buffered reader
-		 * This will be used by the main class*/
-		//implement this code such that 
 		 BufferedReader br = null;
 		 try{
 			br = new BufferedReader(new FileReader(filePath));
@@ -25,12 +21,13 @@ HashMap<Student, String[]> allStudents = new HashMap<Student, String[]>();
 		 int l=1;
 		 while (line!= null){
 			 line = br.readLine();
-			 Student student = new Student();
-			 student.setNumber(l);
-			 Courses c = new Courses(line);
-			 String[] studentCourses = c.splitCourses(line);
-			 allStudents.put(student, studentCourses);
-			 System.out.println("line"+l+" : "+line);
+			 Student student = new Student(); //create student object to populate from line
+			 student.setNumber(l); //set the student number
+			 Courses c = new Courses(line); //create a courses object
+			 String[] studentCourses = c.splitCourses(line); //courses class splits the courses to return String[]
+			 student.setSplit_Course(studentCourses); //set the split_Courses attribute of the student object to studentCourses
+			 System.out.println("read in line"+l+" : "+line);// printlns to debug
+			 System.out.println("Created a student object for student number:"+student.getNumber()+" needing courses "+studentCourses);
 			 l++;
 			 
 		 }
@@ -47,13 +44,13 @@ HashMap<Student, String[]> allStudents = new HashMap<Student, String[]>();
 				 br.close();
 			 }
 			 catch(IOException exc1){
-				 //whatever.
+				 //body not neededhere
 			 }
 		 	}
 		 
 	}
 	 
-public HashMap getAllStudents(){
+public HashSet<Student> getAllStudents(){
 	return allStudents;
 }
 	
