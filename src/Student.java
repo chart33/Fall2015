@@ -1,24 +1,20 @@
-
+/* this class really only makes it easier to
+ * make and store student objects including their student numbers*/
 public class Student {
 
 	int studentNumber;
 	String[] split_Course;
 	
-	Student(String courseLine){
-		//split string using String[]
-		//assign values to an array list
-		//designate the student # based on line in file
-		}
+	Student(){
+	//blank Student constructor
+	}
 	
-	public String[] splitCourses(String courseLine){
-		 split_Course=courseLine.split(".");
-	System.out.println("The courses needed by this student are:");
-	int i=0;
-	for(i=0;i<12;i++){
-		System.out.println(split_Course[i]);
+	public int getNumber() {
+		return studentNumber;
 	}
-	return split_Course;
+	public void setNumber(int studentNumber) {
+		this.studentNumber = studentNumber;
 	}
-	}
+}
 	
 

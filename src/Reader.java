@@ -12,6 +12,7 @@ HashSet<Student> allStudents = new HashSet<Student>();
 public void readFile(String filePath){
 	/*TODO implement this method to read values from file into memory via a buffered reader
 	 * This will be used by the main class*/
+	//implement this code such that 
 	 BufferedReader br = null;
 	 try{
 		br = new BufferedReader(new FileReader(filePath));
@@ -21,7 +22,6 @@ public void readFile(String filePath){
 	 while (line!= null){
 		 line = br.readLine();
 		 Student student = new Student(line);
-		 //can I add code here such that each line read is added to the vector?
 		 System.out.println("line"+l+" : "+line);
 		 allStudents.add(student);
 		 l++;
