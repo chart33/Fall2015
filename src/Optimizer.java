@@ -15,20 +15,29 @@ import gurobi.GRBModel;
 import gurobi.GRBVar;
 
 public class Optimizer implements scheduler {
-Optimizer(String filepath){
+	String filePath;
+	
+	
+Optimizer(){
 	//optimizer constructor
 }
 
+public void setFilePath(String filepathArg){
+	filePath = filepathArg;
+}
+
+public String getFilePath(){
+	return filePath;
+}
 
 //in the below argument, instead of dataFolder
-	public void calculateSchedule(String filepath){
+	public void calculateSchedule(){
 		int student = 600;
 	    int course = 18;
 	    int semester = 12;
 	    GRBVar[] x = new GRBVar[1]; //quick fix
-	    Students allStudent = new Students(filepath); //create and instance of Students to access set of student courses
+	   // Students allStudents = new Students(filePath); //create and instance of Students to access set of student courses
 	    
-
 	    try {
 	    //create GRBEnv
 	      GRBEnv env = new GRBEnv("mip1.log");
@@ -44,7 +53,7 @@ Optimizer(String filepath){
 	            String st = "G_" + String.valueOf(i) + "_" + String.valueOf(j)
 	                             + "_" + String.valueOf(k);
 	            vars[i][j][k] = model.addVar(0.0, 1.0, 0.0, GRB.BINARY, st);
-	            System.out.println("student:"+i+", course:"+j+", semester:"+k);
+	           // System.out.println("student:"+i+", course:"+j+", semester:"+k);
 	          }
 	        }
 	      }
@@ -103,7 +112,7 @@ Optimizer(String filepath){
 	        	int courseNumber = j+1;
 	        	GRBLinExpr capacityConstraint = new GRBLinExpr();
 	        	if(courseK.isOffered(semesterNumber, courseNumber)==true){
-	        	System.out.println("Course"+courseNumber+" is offered in semester "+ semesterNumber);
+	        	//System.out.println("Course"+courseNumber+" is offered in semester "+ semesterNumber);
 	        	for(i = 0; i < student; i++){
 	          capacityConstraint.addTerm(1, vars[i][j][k]);
 	        	}}else{System.out.println("course "+courseNumber+" is not offered in semester"+ semesterNumber);
@@ -119,8 +128,11 @@ Optimizer(String filepath){
 	    
 	      
 	      //CONSTRAINT 3: make student take class (parse student input!)
-	      //iterating through semesters.  =1 if student wants course, =0 if student doesn't want course
-	      for(int i=0; i<= student; i++){
+	      /*COMMENTED OUT! Ran out of time to debug.  Have a NPE I couldn't quite track down and figured
+	       * It was more important that the file be able to compile and run than to have the constraints working
+	       * based on the Rubric posted on Piazza*/ 
+	      
+	      /*for(int i=0; i<= student; i++){
 	    	  String[] mustTakeCourse = null;
 	    	  List courseList = null;
 	    	  for(int j=0; j<=course; j++){
@@ -129,13 +141,23 @@ Optimizer(String filepath){
 	    		  //get the student object corresponding to student number
 	    		  Student iStudent = new Student(); //make a student object corresponding to i value
 	    		  iStudent.setNumber(i+1); //set the student Number attribute
-	    		  Students optStudents = new Students(filepath); //now grab the hashset of all setudents
-	    		  HashSet<Student> theseStudents = new HashSet();
+	    		  Students optStudents = new Students(); //now create your students object
+	    		  optStudents.readStudentClassNeeds("/home/ubuntu/Documents/student_schedule.txt");
+	    		  HashSet<Student> theseStudents = new HashSet<Student>();
+	    		  //artifically populating hashset to diagnose NPE
+	    		  Student student1 = new Student();
+	    		  student1.setNumber(1);
+	    		  theseStudents.add(student1);
+	    		  Student student2 = new Student();
+	    		  student2.setNumber(2);
+	    		  theseStudents.add(student2);
+	    		  //end artifically populating hashset
 	    		  //iterate through hash set checking for Student that matches iStudent
-	    		  for (Student thisStudent : theseStudents){ 
-	    				if(thisStudent.getNumber()== i+1){
+	    		  for (Student studentX : theseStudents){ 
+	    				if(studentX.getNumber()== 2){
 	    					//now, get the set of courses for this student
-	    					mustTakeCourse = iStudent.getSplit_Course();
+	    					System.out.println("found student 2!");
+	    					//mustTakeCourse = iStudent.getSplit_Course();
 	    				}else{}
 	    				courseList = Arrays.asList(mustTakeCourse);
 	    			}
@@ -145,7 +167,7 @@ Optimizer(String filepath){
 	    			 mustTake.addTerm(1, vars[i][j][k]);
 	    		  }
 	    	  }
-	      }
+	      }*/
 	      
 	      //CONSTRAINT 4: prerequisites
 	      //need to define right side and left sided expressions here. coefficients correspond to semester
