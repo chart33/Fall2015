@@ -18,25 +18,28 @@ HashSet<Student> allStudents = new HashSet<Student>();
 	 public void readStudentClassNeeds(String filePath){
 		 BufferedReader br = null;
 		 try{
-			br = new BufferedReader(new FileReader("/home/ubuntu/Documents/student_schedule.txt")); 
-			System.out.println("NOW IN BUFFERED READER");
-		 String line = br.readLine();
+			br = new BufferedReader(new FileReader(filePath)); 
+		 String line = null;
 		 int l=0;
-		 while (line!= null){
-			 line = br.readLine();
+		 
+		 while ( ( line = br.readLine()) != null ){
+			 if(line.contains("%")){continue;}
+			 if(line.trim().length() == 0){continue;}
+			 
+			 System.out.println(line);
 			 Student student = new Student(); //create student object to populate from line
 			 student.setNumber(l); //set the student number
 			 Courses c = new Courses(); //create a courses object
+			 /* HERE IS YOUR PROBLEM*/
+			 System.out.println(line);
 			 String[] studentCourses = c.splitCourses(line); //courses class splits the courses to return String[]
-			 student.setSplit_Course(studentCourses); //set the split_Courses attribute of the student object to studentCourses
-			 System.out.println("read in line"+l+" : "+line);// printlns to debug
-			 System.out.println("Created a student object for student number:"+student.getNumber()+" needing courses "+studentCourses);
-			allStudents.add(student);  //add student to hash set
-			 l++;
-			 
+			 //student.setSplit_Course(studentCourses); //set the split_Courses attribute of the student object to studentCourses
+			 //System.out.println("read in line"+l+" : "+line);// printlns to debug
+			 //System.out.println("Created a student object for student number:"+student.getNumber()+" needing courses "+studentCourses);
+			 allStudents.add(student);  //add student to hash set
+		 	}
 		 }
-		 	
-		 }
+		 
 			
 		 catch(IOException exc){
 			 System.out.println("ERROR:"+exc.getMessage());
