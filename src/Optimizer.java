@@ -8,15 +8,16 @@ import java.util.Vector;
 import com.sun.media.sound.ModelAbstractChannelMixer;
 
 import gurobi.GRB;
+import gurobi.GRB.IntParam;
 import gurobi.GRBEnv;
 import gurobi.GRBException;
 import gurobi.GRBLinExpr;
 import gurobi.GRBModel;
 import gurobi.GRBVar;
 
-public class Optimizer implements scheduler {
+public class Optimizer implements Gscheduler {
 	String filePath;
-	
+	double objectiveValue;
 	
 Optimizer(){
 	//optimizer constructor
@@ -41,8 +42,10 @@ public String getFilePath(){
 	    try {
 	    //create GRBEnv
 	      GRBEnv env = new GRBEnv("mip1.log");
+	      //env.set(IntParam.LogToConsole, 0);
 	      GRBModel model = new GRBModel(env);
 
+	      
 	   // create variables and add to model
 	      GRBVar[][][] vars = new GRBVar[student][course][semester];
 	      //GRBVar[] capacity = new GRBVar[x];
@@ -58,6 +61,7 @@ public String getFilePath(){
 	        }
 	      }
 //add X (maximum capacity) as a variable
+	      x[0]=model.addVar( 0, GRB.INFINITY, 0.0, GRB.INTEGER, "X" );
 	      
 	      // Integrate variables into model
 
@@ -67,14 +71,7 @@ public String getFilePath(){
 	      /********OBJECTIVE FUNCTION************/
 	      
 	      GRBLinExpr objectiveExpr = new GRBLinExpr();
-	      for (int i = 0; i < student; i++) {
-		        for (int j = 0; j < course; j++) {
-		          for (int k = 0; k < semester; k++) {
-		            objectiveExpr.addTerm(1, vars[i][j][k]);
-		          }
-		        }
-		      }
-	      
+	      objectiveExpr.addTerm(1,x[0]);
 	      model.setObjective(objectiveExpr, GRB.MINIMIZE);
 	      
 	      
@@ -115,7 +112,8 @@ public String getFilePath(){
 	        	//System.out.println("Course"+courseNumber+" is offered in semester "+ semesterNumber);
 	        	for(i = 0; i < student; i++){
 	          capacityConstraint.addTerm(1, vars[i][j][k]);
-	        	}}else{System.out.println("course "+courseNumber+" is not offered in semester"+ semesterNumber);
+	          capacityConstraint.addTerm(-1,x[0]);
+	        	}}else{
 	        //now build in X variable, which I"m still not confident about
 	        /*	GRBLinExpr xConstraint = new GRBLinExpr();
 	        	xConstraint.addTerm(-1, x[1]);*/
@@ -128,50 +126,43 @@ public String getFilePath(){
 	    
 	      
 	      //CONSTRAINT 3: make student take class (parse student input!)
-	      /*COMMENTED OUT! Ran out of time to debug.  Have a NPE I couldn't quite track down and figured
-	       * It was more important that the file be able to compile and run than to have the constraints working
+	      /* more important that the file be able to compile and run than to have the constraints working
 	       * based on the Rubric posted on Piazza*/ 
 	      
-	      /*for(int i=0; i<= student; i++){
-	    	  String[] mustTakeCourse = null;
+	      for(int i=0; i<= student; i++){
 	    	  List courseList = null;
 	    	  for(int j=0; j<=course; j++){
 	    		 int  courseNumber = j+1;
 	    		  GRBLinExpr mustTake = new GRBLinExpr();
-	    		  //get the student object corresponding to student number
-	    		  Student iStudent = new Student(); //make a student object corresponding to i value
-	    		  iStudent.setNumber(i+1); //set the student Number attribute
+	    		  Student s = new Student(); //make a student object corresponding to i value
+	    		  s.setNumber(i+1);//set the student Number attribute
 	    		  Students optStudents = new Students(); //now create your students object
-	    		  optStudents.readStudentClassNeeds("/home/ubuntu/Documents/student_schedule.txt");
+	    		  optStudents.readStudentClassNeeds("/home/ubuntu/Documents/student_schedule.txt");//now read in the file
 	    		  HashSet<Student> theseStudents = new HashSet<Student>();
-	    		  //artifically populating hashset to diagnose NPE
-	    		  Student student1 = new Student();
-	    		  student1.setNumber(1);
-	    		  theseStudents.add(student1);
-	    		  Student student2 = new Student();
-	    		  student2.setNumber(2);
-	    		  theseStudents.add(student2);
-	    		  //end artifically populating hashset
 	    		  //iterate through hash set checking for Student that matches iStudent
-	    		  for (Student studentX : theseStudents){ 
-	    				if(studentX.getNumber()== 2){
+	    		  for (Student thisStudent : theseStudents){ 
+	    				if(s.getNumber()== thisStudent.getNumber()){
 	    					//now, get the set of courses for this student
-	    					System.out.println("found student 2!");
+	    					System.out.println("found student:"+s.getNumber());
 	    					//mustTakeCourse = iStudent.getSplit_Course();
+	    					s.setSplit_Course(thisStudent.getSplit_Course());//returns string array of courses
 	    				}else{}
-	    				courseList = Arrays.asList(mustTakeCourse);
+	    				String[] stringArrayCourses = s.getSplit_Course();
+	    				
+	    				//now make it a list array 
+	    				//now see if the course number is an item in that array
+	    				for(int k=0; k<= semester; k++){
+	    				mustTake.addTerm(1, vars[i][j][k]);}
 	    			}
-	    		  GRBLinExpr mustTakeConstraint = new GRBLinExpr();
-	    		  if(courseList.contains(String.valueOf(courseNumber))){
-	    			  int k = 1;// can I get away with or do I need to loop?
-	    			 mustTake.addTerm(1, vars[i][j][k]);
-	    		  }
+	    		  String maxCapacity = "Must_take"+ String.valueOf(i)+".Course_"+String.valueOf(j)+".semester";
+	  	        model.addConstr(mustTake, GRB.LESS_EQUAL,0, maxCapacity);
+	    		 
 	    	  }
-	      }*/
+	      }
 	      
 	      //CONSTRAINT 4: prerequisites
 	      //need to define right side and left sided expressions here. coefficients correspond to semester
-	      
+	      //d
 	      
 	      // Update model
 	      model.update();
@@ -186,7 +177,7 @@ public String getFilePath(){
 	      model.write("scheduler.lp");
 
 	     
-
+	      objectiveValue = model.get(GRB.DoubleAttr.ObjVal);
 	    
 
 	      // Dispose of model and environment
@@ -199,9 +190,10 @@ public String getFilePath(){
 	    }
 	  }
 		
-@Override
+
 public double getObjectiveValue() {
 	// TODO Auto-generated method stub
+	System.out.println("The objective value is:"+objectiveValue);
 	return 0;
 }
 

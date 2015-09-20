@@ -1,5 +1,5 @@
 
-public class Demo {
+public class GDemo {
 
 	public static void main(String[] args) {
 		String filepath = args[0];
